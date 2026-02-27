@@ -1,13 +1,12 @@
 import time
-import os
 import shutil
 
 
 def get_terminal_width():
     try:
         return shutil.get_terminal_size().columns
-    except:
-        return 80 
+    except OSError:
+        return 80
 
 
 def center_text(text: str) -> str:
@@ -15,20 +14,20 @@ def center_text(text: str) -> str:
     padding = max((term_width - len(text)) // 2, 0)
     return " " * padding + text
 
-def loading(tmie: float = 0, file_name : str ="ami-ascii.txt") -> None:
+
+def loading(tmie: float = 0, file_name: str = "ami-ascii.txt") -> None:
     data = None
     try:
         tmie = float(tmie)
-    except ValueError as e:
+    except ValueError:
         tmie = 0
-    
     try:
         with open(file_name, 'r') as file:
-            data = [ line.rstrip('\n')  for line in file]
+            data = [line.rstrip('\n') for line in file]
     except Exception as e:
         print(e)
     if not data:
-        print()
+        print("No loading file name data")
     else:
         print('\n\n\n\n\n\n')
         print("\033[38;2;0;255;0m")  # Green
@@ -36,43 +35,39 @@ def loading(tmie: float = 0, file_name : str ="ami-ascii.txt") -> None:
             print(center_text(line))
             time.sleep(tmie)
         print("\033[0m")
-    time.sleep(tmie)
-        
 
-def decode_cell(value :str) -> dict:
+
+def decode_cell(value: str) -> dict:
     """Decode hex cell value into wall directions."""
     try:
-        int_value =  int(value, 16)
+        int_value = int(value, 16)
         bits = format(int_value, "04b")
-        
         return {
-            'N' : bits[3] == '1',
-            'E' : bits[2] == '1',
-            'S' : bits[1] == '1',
-            'W' : bits[0] == '1',
+            'N': bits[3] == '1',
+            'E': bits[2] == '1',
+            'S': bits[1] == '1',
+            'W': bits[0] == '1',
         }
     except Exception as e:
-        print(e) 
+        print(e)
 
-index = -1
 
-def decode_cell_for_animate(value :str, ) -> dict:
+def decode_cell_for_animate(value: str, index: int) -> dict:
     """Decode hex cell value into wall directions."""
-    global index
     try:
-        int_value =  int(value, 16)
+        index = int(index)
+        if index >= 4 or index < 0:
+            index = 0
+        int_value = int(value, 16)
         bits = format(int_value, "04b")
-        index = 0
         return {
-            'N' : bits[index] == '1',
-            'E' : bits[index] == '1',
-            'S' : bits[index] == '1',
-            'W' : bits[index] == '1',
+            'N': bits[index] == '1',
+            'E': bits[index] == '1',
+            'S': bits[index] == '1',
+            'W': bits[index] == '1',
         }
     except Exception as e:
-        print(e) 
-
-
+        print(e)
 
 
 COLORS = {
@@ -95,15 +90,19 @@ COLORS = {
 }
 
 WALL = {
-    0: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚", "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"},
-    1: {"corner_tl": "+", "corner_tr": "===+", "corner_bl": "+", "corner_br": "+", "h": "===", "v": "║", "h+1": "===="},
-    2: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚", "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━" },
-    3: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚", "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"}
+    0: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
+        "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"},
+    1: {"corner_tl": "+", "corner_tr": "===+", "corner_bl": "+",
+        "corner_br": "+", "h": "===", "v": "║", "h+1": "===="},
+    2: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
+        "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━" },
+    3: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
+        "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"}
 }
 
 COLOR_MENU = {
-    0:{ 
-        "wall_color": "\033[37m",   # White background for walls
+    0: { 
+        "wall_color": "\033[37m",
         "space_color": "\033[47m",  # Black background for empty space
         "solve_color": "\033[67m",  # Blue background for path / arrows
     },
@@ -121,25 +120,55 @@ COLOR_MENU = {
         "wall_color": COLORS["wall"][3],
         "space_color": COLORS["space"][3],
         "solve_color": COLORS["solve"][3],
-    }
+    },
+    4: {
+        "wall_color": "\033[31m",
+        "space_color": "\033[30m",
+        "solve_color": "\033[33m",
+    },
+    5: {
+        "wall_color": "\033[32m",
+        "space_color": "\033[30m",
+        "solve_color": "\033[35m",
+    },
+    6: {
+        "wall_color": "\033[34m",
+        "space_color": "\033[37m",
+        "solve_color": "\033[31m",
+    },
+    7: {
+        "wall_color": "\033[35m",
+        "space_color": "\033[36m",
+        "solve_color": "\033[33m",
+    },
+    8: {
+        "wall_color": "\033[91m",
+        "space_color": "\033[90m",
+        "solve_color": "\033[93m",
+    },
+    9: {
+        "wall_color": "\033[94m",
+        "space_color": "\033[97m",
+        "solve_color": "\033[92m",
+    },
+
 }
 FORTY_TWO_COLORS = [
     "\033[40m",
-    "\033[48;5;196m",  # Intense red
-    "\033[48;5;202m",  # Bright orange
-    "\033[48;5;46m",   # Neon green
-    "\033[48;5;51m",   # Bright cyan
-    "\033[48;5;226m",  # Electric yellow
-    "\033[48;5;201m",  # Hot pink
+    "\033[48;5;196m",
+    "\033[48;5;202m",
+    "\033[48;5;46m",
+    "\033[48;5;51m",
+    "\033[48;5;226m",
+    "\033[48;5;201m",
 ]
 
 ARROWS = {
     "N": "⟰",
-    "S":"⟱",
+    "S": "⟱",
     "E": "⭆",
     "W": "⭅",
 }
-
 
 
 if __name__ == "__main__":
