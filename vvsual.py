@@ -133,113 +133,7 @@ def print_live_maze(data: dict, show: bool = False, change_color: bool = False,
         print(f"Error printing maze: {e}")
         sys.exit()
 
-def print_multi_live_maze(data: dict, show: bool = False, change_color: bool = False,
-                          display_42: bool = False, animate_maze: bool = False,
-                          frame: int = 0, first_yield: bool = False) -> None:
-    """Print formatted maze with path visualization."""
-    try:
-        if not data:
-            print("No maze data available")
-            return
-        maze = data.get("maze", [])
-        start = tuple(data.get("start"))
-        end = tuple(data.get("end"))
-        path1 = data.get("path1")
-        height = len(maze)
-        width = len(maze[0])
-        directions = {
-            'N': (-1, 0),
-            'E': (0, 1),
-            'S': (1, 0),
-            'W': (0, -1),
-            }
 
-        path_solve = []
-        if path1:
-            start_point = start
-            for x in path1:
-                dy, dx = directions[x]
-                start_point = (start_point[0] + dy, start_point[1] + dx)
-                path_solve.append(start_point)
-
-        choice_color = 0
-        choice = 0
-        if change_color:
-            choice_color = random.randint(1, 9)
-            choice = random.randint(0, 3)
-        else:
-            choice_color = 0
-        forty_two = 0
-        if display_42:
-            forty_two = random.randint(1, 4)
-
-        menu = COLOR_MENU[choice_color]
-        wall_color = menu["wall_color"]
-        space_color = FORTY_TWO_COLORS[forty_two]
-        solve_color = menu["solve_color"]
-        wall_type = WALL[choice]
-        if first_yield:
-            clear_terminal()
-            loading()
-
-        line = wall_color + wall_type["corner_tl"] + wall_type["h+1"] * (width - 1) + wall_type["corner_tr"] + COLORS["reset"]
-        print(center_text(line, width))
-
-        for y in range(height):
-            row_top = wall_color + "┃" + COLORS["reset"]
-            row_bottom = wall_color + (wall_type["corner_bl"] if y == height - 1 else wall_type["v"]) + COLORS["reset"]
-            for x in range(width):
-                if animate_maze:
-                    cell_walls = decode_cell_for_animate(maze[y][x], frame)
-                else:
-                    cell_walls = decode_cell(maze[y][x])
-
-                if (y, x) == start:
-                    cell_char = COLORS["reset"] + solve_color + " S " + COLORS["reset"] + wall_color
-                elif (y, x) == end:
-                    cell_char = solve_color + " X " + COLORS["reset"] + wall_color 
-                elif show and (y, x) in path_solve:
-                    arrow = f" {ARROWS[path[path_solve.index((y, x))]]} "
-                    cell_char = solve_color + arrow + COLORS["reset"] + wall_color 
-                else:
-                    if all(cell_walls.values()):
-                        cell_char = COLORS["reset"] + space_color + "░░░" + COLORS["reset"] + wall_color
-                    else:
-                        cell_char = "   " + wall_color
-
-                row_top += wall_color + cell_char + (wall_type["v"] if cell_walls['E'] or x == width - 1 else " ") + COLORS["reset"]
-                # 3. South Wall (Horizontal)
-                row_bottom += wall_color + (wall_type["h"] if cell_walls['S'] or y == height - 1 else "   ") + COLORS["reset"]
-                if x < width - 1:
-                    if y < height - 1:
-                        # Inside the maze: Use a cross-junction
-                        row_bottom += wall_color + "╋" + COLORS["reset"] 
-                    else:
-                        # Bottom edge: Use a T-junction pointing up
-                        row_bottom += wall_color + "┻" + COLORS["reset"]
-                else:
-                    if y < height - 1:
-                        # Right edge: Use a T-junction pointing left
-                        row_bottom += COLORS["reset"] + wall_color + "┃" + COLORS["reset"]
-                    else:
-                        # Final bottom-right corner "┛"
-                        row_bottom += wall_color + wall_type["corner_br"] + COLORS["reset"]
-            if first_yield:
-                print(center_text(row_top, width))
-                print(center_text(row_bottom, width))
-
-    except Exception as e:
-        print(f"Error printing maze: {e}")
-        sys.exit()
-
-def mt_paths(data: dict, paths: list):
-
-    first_yield = True
-    for path in paths:
-        data["path"] = path
-        print_multi_live_maze(data, True, False, False, False, 0, first_yield)
-        first_yield = False
-    
 def animate_maze_generation(maze) -> None:
     display = export_output(maze.output_file)
     indx = 0
@@ -305,14 +199,14 @@ def show_menu(maze, width) -> None:
                 choice = int(choice_input)
                 if 1 <= choice <= 6:
                     display = export_output(maze.output_file)
-                    
                     # short_path = maze.get_selected_solution(0)
                     # long_path = maze.get_selected_solution(1)
                     if choice == 1:
                         new_maze(maze)
                         show_path = False
                     elif choice == 2:
-                        show_path = not show_path
+                        if not show_path:
+                            show_path = not show_path
                         print_live_maze(display, show_path, False, False)
                     elif choice == 3:
                         change_color = True
@@ -322,9 +216,7 @@ def show_menu(maze, width) -> None:
                         forty_two = True
                         print_live_maze(display, show_path, False, forty_two)
                     elif choice == 5:
-                        display_multi = export_output(maze.output_file)
-                        all = maze.get_selected_solution(2)
-                        mt_paths(display_multi, all)
+                        animate_maze_generation(maze)
                     elif choice == 6:
                         clear_terminal()
                         quit_terminal()

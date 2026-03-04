@@ -291,7 +291,7 @@ class MazeGenerator:
             return False
 #v10
 
-# maze = MazeGenerator(20, 20, (0,0), (4,4), "ouht", False, None, "primes")
+# maze = MazeGenerator(20, 20, (0,0), (19,19), "ouht", False, None, "primes")
 # maze.generate_maze()
 # print(maze.get_selected_solution(0))
 # print(maze.get_selected_solution(1))
