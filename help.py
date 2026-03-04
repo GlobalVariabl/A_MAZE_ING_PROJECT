@@ -85,6 +85,38 @@ def decode_cell_for_animate(value: str, index: int) -> dict:
         print(e)
 
 
+directions = {
+    'N': (-1, 0),
+    'E': (0, 1),
+    'S': (1, 0),
+    'W': (0, -1),
+}
+
+
+def fetch_path(path: str | list, start: tuple):
+    if not path or not start:
+        print("Path not found or start missing")
+        sys.exit()
+
+    path_solve = []
+    start_point = start
+    if isinstance(path, str):
+        for x in path:
+            dy, dx = directions[x]
+            start_point = (start_point[0] + dy, start_point[1] + dx)
+            path_solve.append(start_point)
+        return path_solve
+    elif isinstance(path, list):
+        for x in path:
+            start_point = start
+            for y in x:
+                dy, dx = directions[y]
+                start_point = (start_point[0] + dy, start_point[1] + dx)
+                path_solve.append(start_point)
+        return path_solve
+
+
+
 COLORS = {
     "wall": {
         1: "\033[91m",  # Bright red

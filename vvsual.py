@@ -5,7 +5,7 @@ import random
 import time
 
 from help import loading, COLORS, WALL, COLOR_MENU, decode_cell, center_text
-from help import ARROWS, FORTY_TWO_COLORS, decode_cell_for_animate
+from help import ARROWS, FORTY_TWO_COLORS, decode_cell_for_animate, fetch_path
 
 def export_output(output_file: str) -> dict:
     """Parse maze output file into structured data."""
@@ -37,7 +37,7 @@ def export_output(output_file: str) -> dict:
 
 def print_live_maze(data: dict, show: bool = False, change_color: bool = False,
                     display_42: bool = False, animate_maze: bool = False,
-                    frame: int = 0) -> None:
+                    st_p: bool = False ,frame: int = 0) -> None:
     """Print formatted maze with path visualization."""
     try:
         if not data:
@@ -49,21 +49,23 @@ def print_live_maze(data: dict, show: bool = False, change_color: bool = False,
         path = data.get("path")
         height = len(maze)
         width = len(maze[0])
-        directions = {
-            'N': (-1, 0),
-            'E': (0, 1),
-            'S': (1, 0),
-            'W': (0, -1),
-            }
 
-        path_solve = []
-        if path:
-            start_point = start
-            for x in path:
-                dy, dx = directions[x]
-                start_point = (start_point[0] + dy, start_point[1] + dx)
-                path_solve.append(start_point)
+        # directions = {
+        #     'N': (-1, 0),
+        #     'E': (0, 1),
+        #     'S': (1, 0),
+        #     'W': (0, -1),
+        #     }
 
+        # path_solve = []
+        # if path:
+        #     start_point = start
+        #     for x in path:
+        #         dy, dx = directions[x]
+        #         start_point = (start_point[0] + dy, start_point[1] + dx)
+        #         path_solve.append(start_point)
+        path_solve = fetch_path(path, start)
+       
         choice_color = 0
         choice = 0
         if change_color:
@@ -99,9 +101,12 @@ def print_live_maze(data: dict, show: bool = False, change_color: bool = False,
                     cell_char = COLORS["reset"] + solve_color + " S " + COLORS["reset"] + wall_color
                 elif (y, x) == end:
                     cell_char = solve_color + " X " + COLORS["reset"] + wall_color 
-                elif show and (y, x) in path_solve:
+                elif show and not st_p and (y, x) in path_solve:
                     arrow = f" {ARROWS[path[path_solve.index((y, x))]]} "
                     cell_char = solve_color + arrow + COLORS["reset"] + wall_color 
+                
+                elif st_p and (y, x) in path_solve:
+                    cell_char = "\033[111m" + " * " + COLORS["reset"] + wall_color 
                 else:
                     if all(cell_walls.values()):
                         cell_char = COLORS["reset"] + space_color + "░░░" + COLORS["reset"] + wall_color
@@ -139,10 +144,10 @@ def animate_maze_generation(maze) -> None:
     indx = 0
     while indx < 4:
         print_live_maze(display, False, False,
-                        True, True, indx)
+                        True, True, False, indx)
         time.sleep(0.4)
         indx += 1
-    print_live_maze(display, False, False, False, False)
+    print_live_maze(display, False, False, False, False, False)
 
 
 def new_maze(maze):
@@ -179,12 +184,12 @@ def clear_terminal():
 def quit_terminal():
     sys.exit()
 
+
 def show_menu(maze, width) -> None:
     """Display interactive menu."""
     show_path = False
     change_color = False
     forty_two = False
-    type_path = 0
     try:
         while True:
             print("\n", " " * 6, "=== Menu ===")
@@ -205,8 +210,7 @@ def show_menu(maze, width) -> None:
                         new_maze(maze)
                         show_path = False
                     elif choice == 2:
-                        if not show_path:
-                            show_path = not show_path
+                        show_path = not show_path
                         print_live_maze(display, show_path, False, False)
                     elif choice == 3:
                         change_color = True
@@ -216,7 +220,10 @@ def show_menu(maze, width) -> None:
                         forty_two = True
                         print_live_maze(display, show_path, False, forty_two)
                     elif choice == 5:
-                        animate_maze_generation(maze)
+                        display["path"] = maze.get_selected_solution(2)
+                        print(display["path"])
+                        print_live_maze(display, True, False, forty_two, False, True)
+                        # animate_maze_generation(maze)
                     elif choice == 6:
                         clear_terminal()
                         quit_terminal()
@@ -231,7 +238,7 @@ def show_menu(maze, width) -> None:
 
 def to_start(maze) -> None:
     clear_terminal()
-    loading(0.3, "ascii-art.txt")
+    # loading(0.3, "ascii-art.txt")
     display = export_output(maze.output_file)
     print_live_maze(display, False, False, False)
     show_menu(maze, len(display['maze'][0]))

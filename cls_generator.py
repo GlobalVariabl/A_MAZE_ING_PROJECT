@@ -273,7 +273,7 @@ class MazeGenerator:
         except self.stop_rec:
             pass
         return all_paths
-
+    
     def import_maze(self) -> bool:
         solution = self.solve_the_maze()
         try:
@@ -291,8 +291,6 @@ class MazeGenerator:
             return False
 #v10
 
-# maze = MazeGenerator(20, 20, (0,0), (19,19), "ouht", False, None, "primes")
+# maze = MazeGenerator(27, 37, (0,0), (36,26), "ouht", False, None, "primes")
 # maze.generate_maze()
-# print(maze.get_selected_solution(0))
-# print(maze.get_selected_solution(1))
 # print(maze.get_selected_solution(2))
