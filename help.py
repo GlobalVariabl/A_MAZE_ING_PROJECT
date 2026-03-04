@@ -1,5 +1,13 @@
 import time
 import shutil
+import re
+import sys
+
+
+def visible_len(text: str) -> int:
+    """Return length of string ignoring ANSI escape codes"""
+    pattern = re.compile(r'\x1b\[[0-9;]*m')
+    return len(pattern.sub('', text))
 
 
 def get_terminal_width():
@@ -9,10 +17,17 @@ def get_terminal_width():
         return 80
 
 
-def center_text(text: str) -> str:
-    term_width = get_terminal_width()
-    padding = max((term_width - len(text)) // 2, 0)
-    return " " * padding + text
+def center_text(text: str, width: int) -> str:
+    try:
+        width = int(width)
+        term_width = get_terminal_width()
+        if width > term_width:
+            print(f"tha maze width is is bigr than width of tirmnal")
+            sys.exit()
+        padding = max((term_width - visible_len(text)) // 2, 0)
+        return " " * padding + text
+    except Exception as e:
+        print(e)
 
 
 def loading(tmie: float = 0, file_name: str = "ami-ascii.txt") -> None:
@@ -32,7 +47,7 @@ def loading(tmie: float = 0, file_name: str = "ami-ascii.txt") -> None:
         print('\n\n\n\n\n\n')
         print("\033[38;2;0;255;0m")  # Green
         for line in data:
-            print(center_text(line))
+            print(center_text(line, 75))
             time.sleep(tmie)
         print("\033[0m")
 

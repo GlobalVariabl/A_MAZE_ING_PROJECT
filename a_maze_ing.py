@@ -1,7 +1,7 @@
 import sys
 from cls_generator import MazeGenerator
-import random
 from vvsual import to_start
+
 
 def parse_config_file(file_name: str) -> dict:
     redict = {}
@@ -31,7 +31,7 @@ def get_location(string_loc: str) -> tuple:
 
 def check_locations_within_eria(location: tuple, wigth: int,
                                 height: int) -> bool:
-    if 0 <= location[0] < wigth and 0 <= location[1] < height:
+    if 0 <= location[0] < height and 0 <= location[1] < wigth:
         return (True)
     return (False)
 
@@ -40,40 +40,53 @@ def main():
     if len(sys.argv) != 2:
         sys.exit(1)
     configs = parse_config_file(sys.argv[1])
+    if configs is None:
+        sys.exit(1)
 
     try:
-        wigth = int(configs["WIDTH"])
+        current_key = "WIDTH"
+        width = int(configs["WIDTH"])
+        current_key = "HEIGHT"
         height = int(configs["HEIGHT"])
+        current_key = "ENTRY"
         entry = get_location(configs["ENTRY"])
+        current_key = "EXIT"
         exit_ = get_location(configs["EXIT"])
+        current_key = "OUTPUT_FILE"
         output_file = configs["OUTPUT_FILE"]
+        current_key = "PERFECT"
         perfect = (configs.get("PERFECT", "true").lower() == "true")
+        current_key = "SEED"
         seed = int(configs["SEED"]) if "SEED" in configs else None
-        if seed is not None:
-            random.seed(seed)
+        current_key = "ALGO"
+        algo = configs["ALGO"] if "ALGO" in configs else None
 
-
-        if not check_locations_within_eria(entry, wigth, height):
+        if width <= 0 or height <= 0:
+            raise ValueError("WIDTH and HEIGHT must be positive integers")
+        if not check_locations_within_eria(entry, width, height):
             print("ENTRY point is outsid of the maze")
             sys.exit(1)
-        if not check_locations_within_eria(exit_, wigth, height):
+        if not check_locations_within_eria(exit_, width, height):
             print("EXIT point is outsid of the maze")
             sys.exit(1)
         if entry == exit_:
             print("ENTRY and EXIT points can not be the same point")
             sys.exit(0)
-        maze = MazeGenerator(wigth, height, entry, exit_, output_file, perfect)
+        maze = MazeGenerator(width, height, entry, exit_, output_file,
+                             perfect, seed, algo)
         maze.generate_maze()
-        maze.import_maze()
+        if not maze.import_maze():
+            sys.exit(1)
         to_start(maze)
 
     except ValueError as e:
-        print(f"EROOR: invalid value in config ({e})")
+        print(f"ERROR: invalid value in config :({e})")
     except KeyError:
-        print("ERROR: there is not key in configfile")
+        print(f"ERROR: there is not {current_key} key in configfile")
     except Exception as e:
         print(e)
 
 
 if __name__ == "__main__":
     main()
+#v10
