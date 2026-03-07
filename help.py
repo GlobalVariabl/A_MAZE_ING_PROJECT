@@ -22,7 +22,7 @@ def center_text(text: str, width: int) -> str:
         width = int(width)
         term_width = get_terminal_width()
         if width > term_width:
-            print(f"tha maze width is is bigr than width of tirmnal")
+            print("tha maze width is is bigr than width of tirmnal")
             sys.exit()
         padding = max((term_width - visible_len(text)) // 2, 0)
         return " " * padding + text
@@ -118,7 +118,6 @@ def fetch_path(path: str | list, start: tuple):
         return path_solve
 
 
-
 COLORS = {
     "wall": {
         1: "\033[91m",  # Bright red
@@ -144,13 +143,13 @@ WALL = {
     1: {"corner_tl": "+", "corner_tr": "===+", "corner_bl": "+",
         "corner_br": "+", "h": "===", "v": "║", "h+1": "===="},
     2: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
-        "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━" },
+        "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"},
     3: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
         "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"}
 }
 
 COLOR_MENU = {
-    0: { 
+    0: {
         "wall_color": "\033[37m",
         "space_color": "\033[47m",  # Black background for empty space
         "solve_color": "\033[67m",  # Blue background for path / arrows
@@ -222,58 +221,3 @@ ARROWS = {
 
 if __name__ == "__main__":
     loading()
-
-
-
-
-
-
-
-
-
-# # Draw top border of maze
-        # print(center_text(wall_color+ "┏" + "━━━━" * (width - 1) + "━━━┓"+ COLORS["reset"]))
-
-        # for y in range(height):
-        #     row_top = wall_color + "┃" +  COLORS["reset"]
-        #     row_bottom = f'{wall_color + ("┣" if y < height - 1 else "┗") + COLORS["reset"]}'
-
-        #     for x in range(width):
-        #         cell_walls = decode_cell(maze[y][x])
-                
-        #         # 1. Cell Content
-        #         if (y, x) == start:
-        #             cell_char = solve_color + " S " + COLORS["reset"]
-        #         elif (y, x) == end:
-        #             cell_char = solve_color + " X " + COLORS["reset"]
-        #         elif show and (y, x) in path_solve:
-        #             cell_char = solve_color + " * " + COLORS["reset"]
-        #         else:
-        #             cell_char = space_color + "   " + COLORS["reset"]
-
-        #         # 2. East Wall (Vertical)
-        #         # If it's the last column, we always draw a border
-        #         row_top += cell_char + (wall_color + "┃" + COLORS["reset"] if cell_walls['E'] or x == width - 1 else " ")
-
-        #         # 3. South Wall (Horizontal)
-        #         # If it's the last row, we always draw a border
-        #         row_bottom += wall_color + ("━━━" if cell_walls['S'] or y == height - 1 else "   ") + COLORS["reset"]
-
-        #         # 4. The Junction (The "???" logic)
-        #         if x < width - 1:
-        #             if y < height - 1:
-        #                 # Inside the maze: Use a cross-junction
-        #                 row_bottom += "┃" 
-        #             else:
-        #                 # Bottom edge: Use a T-junction pointing up
-        #                 row_bottom += "━"
-        #         else:
-        #             if y < height - 1:
-        #                 # Right edge: Use a T-junction pointing left
-        #                 row_bottom += "┫"
-        #             else:
-        #                 # Final bottom-right corner
-        #                 row_bottom += "┛"
-            
-        #     print(center_text(row_top))
-        #     print(center_text(row_bottom))
