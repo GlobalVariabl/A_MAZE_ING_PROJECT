@@ -107,12 +107,14 @@ def fetch_path(path: str | list, start: tuple):
             path_solve.append(start_point)
         return path_solve
     elif isinstance(path, list):
+        indx = 0
         for x in path:
             start_point = start
             for y in x:
                 dy, dx = directions[y]
-                start_point = (start_point[0] + dy, start_point[1] + dx)
+                start_point = (start_point[0] + dy, start_point[1] + dx, indx)
                 path_solve.append(start_point)
+            indx += 1
         return path_solve
 
 

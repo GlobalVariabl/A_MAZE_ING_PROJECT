@@ -104,9 +104,17 @@ def print_live_maze(data: dict, show: bool = False, change_color: bool = False,
                 elif show and not st_p and (y, x) in path_solve:
                     arrow = f" {ARROWS[path[path_solve.index((y, x))]]} "
                     cell_char = solve_color + arrow + COLORS["reset"] + wall_color 
-                
-                elif st_p and (y, x) in path_solve:
-                    cell_char = "\033[111m" + " * " + COLORS["reset"] + wall_color 
+
+                elif st_p:
+                    
+                    if (y, x, 0) in path_solve:
+                        cell_char = "\033[91m" + " * " + COLORS["reset"] + wall_color
+                    elif (y, x, 1) in path_solve:
+                        cell_char = "\033[92m" + " * " + COLORS["reset"] + wall_color
+                    elif (y, x, 2) in path_solve:
+                        cell_char = "\033[93m" + " * " + COLORS["reset"] + wall_color
+                    else:
+                        cell_char = "   " + wall_color
                 else:
                     if all(cell_walls.values()):
                         cell_char = COLORS["reset"] + space_color + "░░░" + COLORS["reset"] + wall_color
@@ -238,7 +246,7 @@ def show_menu(maze, width) -> None:
 
 def to_start(maze) -> None:
     clear_terminal()
-    # loading(0.3, "ascii-art.txt")
+    loading(0.3, "ascii-art.txt")
     display = export_output(maze.output_file)
     print_live_maze(display, False, False, False)
     show_menu(maze, len(display['maze'][0]))
