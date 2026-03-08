@@ -97,7 +97,9 @@ directions: Dict[str, Tuple[int, int]] = {
 }
 
 
-def fetch_path(path: Union[str, List[str]], start: Tuple[int, int]) -> List[Union[Tuple[int, int], Tuple[int, int, int]]]:
+def fetch_path(path: Union[str, List[str]],
+               start: Tuple[int, int]
+               ) -> List[Union[Tuple[int, int], Tuple[int, int, int]]]:
     if not path or not start:
         print("Path not found or start missing")
         sys.exit()
