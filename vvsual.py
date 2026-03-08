@@ -56,7 +56,8 @@ def print_live_maze(data: Dict[str, Any],
 
         start: Tuple[int, int] = (start_data[0], start_data[1])
         end: Tuple[int, int] = (end_data[0], end_data[1])
-        path_solve: List[Union[Tuple[int, int], Tuple[int, int, int]]] = fetch_path(path, start)
+        path_solve: List[Union[Tuple[int, int], Tuple[int, int, int]]]
+        path_solve = fetch_path(path, start)
         choice_color = 0
         choice = 0
         if change_color:
@@ -85,7 +86,8 @@ def print_live_maze(data: Dict[str, Any],
         for y in range(height):
             row_top: str = wall_color + "┃" + reset
             row_bottom: str = (wall_color
-                               + (wall_type["corner_bl"] if y == height - 1 else wall_type["v"])
+                               + (wall_type["corner_bl"] if y == height - 1
+                                  else wall_type["v"])
                                + reset)
             for x in range(width):
                 if animate_maze:
@@ -95,7 +97,8 @@ def print_live_maze(data: Dict[str, Any],
 
                 cell_char: str
                 if (y, x) == start:
-                    cell_char = reset + solve_color + " S " + reset + wall_color
+                    cell_char = (reset + solve_color + " S " + reset +
+                                 wall_color)
                 elif (y, x) == end:
                     cell_char = solve_color + " X " + reset + wall_color
                 elif show and not three_path and (y, x) in path_solve:
@@ -103,24 +106,33 @@ def print_live_maze(data: Dict[str, Any],
                     cell_char = solve_color + arrow + reset + wall_color
                 elif three_path:
                     if (y, x, 0) in path_solve:
-                        cell_char = reset + "\033[41m" + " 1 " + reset + wall_color
+                        cell_char = (reset + "\033[41m" + " 1 " + reset +
+                                     wall_color)
                     elif (y, x, 1) in path_solve:
-                        cell_char = reset + "\033[42m" + " 2 " + reset + wall_color
+                        cell_char = (reset + "\033[42m" + " 2 " + reset +
+                                     wall_color)
                     elif (y, x, 2) in path_solve:
-                        cell_char = reset + "\033[43m" + " 3 " + reset + wall_color
+                        cell_char = (reset + "\033[43m" + " 3 " + reset +
+                                     wall_color)
                     elif all(cell_walls.values()):
-                        cell_char = reset + space_color + "░░░" + reset + wall_color
+                        cell_char = (reset + space_color + "░░░" + reset +
+                                     wall_color)
                     else:
                         cell_char = "   " + wall_color
                 elif all(cell_walls.values()):
-                    cell_char = reset + space_color + "░░░" + reset + wall_color
+                    cell_char = (reset + space_color + "░░░" + reset +
+                                 wall_color)
                 else:
                     cell_char = "   " + wall_color
 
                 row_top += (wall_color + cell_char
-                            + (wall_type["v"] if cell_walls['E'] or x == width - 1 else " ")
+                            + (wall_type["v"]
+                               if cell_walls['E'] or x == width - 1 else " ")
                             + reset)
-                row_bottom += wall_color + (wall_type["h"] if cell_walls['S'] or y == height - 1 else "   ") + reset
+                row_bottom += (wall_color +
+                               (wall_type["h"]
+                                if cell_walls['S'] or y == height - 1
+                                else "   ") + reset)
                 if x < width - 1:
                     if y < height - 1:
                         row_bottom += wall_color + "╋" + reset
@@ -130,7 +142,8 @@ def print_live_maze(data: Dict[str, Any],
                     if y < height - 1:
                         row_bottom += reset + wall_color + "┃" + reset
                     else:
-                        row_bottom += wall_color + wall_type["corner_br"] + reset
+                        row_bottom += (wall_color + wall_type["corner_br"] +
+                                       reset)
 
             print(center_text(row_top, width))
             print(center_text(row_bottom, width))
