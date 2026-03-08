@@ -1,6 +1,6 @@
 import random
 import sys
-from typing import Union
+from typing import List, Tuple, Union
 from collections import deque
 sys.setrecursionlimit(5000)
 
@@ -14,7 +14,7 @@ class MazeGenerator:
         self.exit = exit
         self.output_file = output_file
         self.perfect = perfect
-        self.forbidden_coordinates = [()]
+        self.forbidden_coordinates: List[Tuple[int, int]] = []
         self.seed = seed
         self.algo = algo
         if algo is None:
@@ -213,7 +213,7 @@ class MazeGenerator:
         visited = [[False for _
                     in range(self.width)] for _ in range(self.height)]
 
-        queue = deque()
+        queue: deque[Tuple[int, int, str]] = deque()
         queue.append((self.entry[0], self.entry[1], ""))
         visited[self.entry[0]][self.entry[1]] = True
 
@@ -273,7 +273,7 @@ class MazeGenerator:
         except self.stop_rec:
             pass
         return all_paths
-    
+
     def import_maze(self) -> bool:
         solution = self.solve_the_maze()
         try:
@@ -289,8 +289,8 @@ class MazeGenerator:
         except Exception:
             print("ERROR: can not load file output")
             return False
-#v10
 
+# v10
 # maze = MazeGenerator(27, 37, (0,0), (36,26), "ouht", False, None, "primes")
 # maze.generate_maze()
 # print(maze.get_selected_solution(2))

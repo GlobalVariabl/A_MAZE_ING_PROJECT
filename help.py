@@ -1,3 +1,4 @@
+from typing import Dict, List, Tuple, Union
 import time
 import shutil
 import re
@@ -10,7 +11,7 @@ def visible_len(text: str) -> int:
     return len(pattern.sub('', text))
 
 
-def get_terminal_width():
+def get_terminal_width() -> int:
     try:
         return shutil.get_terminal_size().columns
     except OSError:
@@ -28,6 +29,7 @@ def center_text(text: str, width: int) -> str:
         return " " * padding + text
     except Exception as e:
         print(e)
+        return text
 
 
 def loading(tmie: float = 0, file_name: str = "ami-ascii.txt") -> None:
@@ -52,7 +54,7 @@ def loading(tmie: float = 0, file_name: str = "ami-ascii.txt") -> None:
         print("\033[0m")
 
 
-def decode_cell(value: str) -> dict:
+def decode_cell(value: str) -> Dict[str, bool]:
     """Decode hex cell value into wall directions."""
     try:
         int_value = int(value, 16)
@@ -65,9 +67,10 @@ def decode_cell(value: str) -> dict:
         }
     except Exception as e:
         print(e)
+        return {'N': False, 'E': False, 'S': False, 'W': False}
 
 
-def decode_cell_for_animate(value: str, index: int) -> dict:
+def decode_cell_for_animate(value: str, index: int) -> Dict[str, bool]:
     """Decode hex cell value into wall directions."""
     try:
         index = int(index)
@@ -83,9 +86,10 @@ def decode_cell_for_animate(value: str, index: int) -> dict:
         }
     except Exception as e:
         print(e)
+        return {'N': False, 'E': False, 'S': False, 'W': False}
 
 
-directions = {
+directions: Dict[str, Tuple[int, int]] = {
     'N': (-1, 0),
     'E': (0, 1),
     'S': (1, 0),
@@ -93,16 +97,17 @@ directions = {
 }
 
 
-def fetch_path(path: str | list, start: tuple):
+def fetch_path(path: Union[str, List[str]], start: Tuple[int, int]) -> List[Union[Tuple[int, int], Tuple[int, int, int]]]:
     if not path or not start:
         print("Path not found or start missing")
         sys.exit()
 
-    path_solve = []
-    start_point = start
+    path_solve: List[Union[Tuple[int, int], Tuple[int, int, int]]] = []
+    start_point: Union[Tuple[int, int], Tuple[int, int, int]] = start
     if isinstance(path, str):
         for x in path:
             dy, dx = directions[x]
+            assert isinstance(start_point, tuple) and len(start_point) >= 2
             start_point = (start_point[0] + dy, start_point[1] + dx)
             path_solve.append(start_point)
         return path_solve
@@ -112,13 +117,15 @@ def fetch_path(path: str | list, start: tuple):
             start_point = start
             for y in x:
                 dy, dx = directions[y]
+                assert isinstance(start_point, tuple) and len(start_point) >= 2
                 start_point = (start_point[0] + dy, start_point[1] + dx, indx)
                 path_solve.append(start_point)
             indx += 1
         return path_solve
+    return path_solve
 
 
-COLORS = {
+COLORS: Dict[str, Union[Dict[int, str], str]] = {
     "wall": {
         1: "\033[91m",  # Bright red
         2: "\033[92m",  # Bright green
@@ -137,7 +144,7 @@ COLORS = {
     "reset": "\033[0m"
 }
 
-WALL = {
+WALL: Dict[int, Dict[str, str]] = {
     0: {"corner_tl": "╔", "corner_tr": "━━━╗", "corner_bl": "╚",
         "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"},
     1: {"corner_tl": "+", "corner_tr": "===+", "corner_bl": "+",
@@ -148,26 +155,33 @@ WALL = {
         "corner_br": "╝", "h": "━━━", "v": "┃", "h+1": "━━━━"}
 }
 
-COLOR_MENU = {
+_wall_colors = COLORS["wall"]
+_space_colors = COLORS["space"]
+_solve_colors = COLORS["solve"]
+assert isinstance(_wall_colors, dict)
+assert isinstance(_space_colors, dict)
+assert isinstance(_solve_colors, dict)
+
+COLOR_MENU: Dict[int, Dict[str, str]] = {
     0: {
         "wall_color": "\033[37m",
         "space_color": "\033[47m",  # Black background for empty space
         "solve_color": "\033[67m",  # Blue background for path / arrows
     },
     1: {
-        "wall_color": COLORS["wall"][1],
-        "space_color": COLORS["space"][1],
-        "solve_color": COLORS["solve"][1],
+        "wall_color": _wall_colors[1],
+        "space_color": _space_colors[1],
+        "solve_color": _solve_colors[1],
     },
     2: {
-        "wall_color": COLORS["wall"][2],
-        "space_color": COLORS["space"][2],
-        "solve_color": COLORS["solve"][2],
+        "wall_color": _wall_colors[2],
+        "space_color": _space_colors[2],
+        "solve_color": _solve_colors[2],
     },
     3: {
-        "wall_color": COLORS["wall"][3],
-        "space_color": COLORS["space"][3],
-        "solve_color": COLORS["solve"][3],
+        "wall_color": _wall_colors[3],
+        "space_color": _space_colors[3],
+        "solve_color": _solve_colors[3],
     },
     4: {
         "wall_color": "\033[31m",
@@ -199,9 +213,9 @@ COLOR_MENU = {
         "space_color": "\033[97m",
         "solve_color": "\033[92m",
     },
-
 }
-FORTY_TWO_COLORS = [
+
+FORTY_TWO_COLORS: List[str] = [
     "\033[40m",
     "\033[48;5;196m",
     "\033[48;5;202m",
@@ -211,7 +225,7 @@ FORTY_TWO_COLORS = [
     "\033[48;5;201m",
 ]
 
-ARROWS = {
+ARROWS: Dict[str, str] = {
     "N": "⟰",
     "S": "⟱",
     "E": "⭆",

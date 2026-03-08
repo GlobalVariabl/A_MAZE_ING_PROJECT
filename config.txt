@@ -1,9 +1,9 @@
 # Maze configuration example
-WIDTH=30
-HEIGHT=20
+WIDTH=14
+HEIGHT=12
 ENTRY=0,0
-EXIT=19,29
+EXIT=11,9
 OUTPUT_FILE=maze_output.txt
-PERFECT=False
+PERFECT=false
 #SEED=42
 #algo=DFS
