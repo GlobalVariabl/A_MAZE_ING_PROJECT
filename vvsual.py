@@ -229,7 +229,7 @@ def show_menu(maze: MazeGenerator, width: int) -> None:
 
 def to_start(maze: MazeGenerator) -> None:
     clear_terminal()
-    # loading(0.3, "ascii-art.txt")
+    loading(0.3, "ascii-art.txt")
     display = export_output(maze.output_file)
     print_live_maze(display, False, False, False)
     show_menu(maze, len(display['maze'][0]))

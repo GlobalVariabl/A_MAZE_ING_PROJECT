@@ -170,6 +170,11 @@ print(maze.get_selected_solution(2))  # up to 3 distinct paths
 - Separating `help.py` early meant both members could work on their modules in parallel without merge conflicts.
 - Adding a `SEED` option made debugging reproducible — the same maze could be regenerated exactly for testing.
 
+### The roles of each team member:
+
+-magram : was the one who built the maze, and the responsible of the maze's colors and UI
+-souhsain : is the responsible of the maze's algorithm and the overall project's structure   
+
 ### What could be improved
 
 - The recursion depth limit (`sys.setrecursionlimit(5000)`) is a workaround; a future version should convert `generate_maze_dfs` to an iterative stack-based implementation.
