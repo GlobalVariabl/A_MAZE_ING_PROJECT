@@ -30,12 +30,20 @@ The project is split across four source files:
 
 ```bash
 python3 a_maze_ing.py <config.txt>
+
+or 
+
+make run
 ```
 
 Example:
 
 ```bash
 python3 a_maze_ing.py config.txt
+
+or 
+
+make run
 ```
 
 ### Config file format
@@ -153,8 +161,8 @@ print(maze.get_selected_solution(2))  # up to 3 distinct paths
 
 | Member | Responsibilities |
 |---|---|
-| student1 | `cls_generator.py` — maze generation algorithms, BFS/DFS solver, file I/O |
-| student2 | `vvsual.py` + `help.py` — terminal renderer, colour system, interactive menu, easter egg layout |
+| souhsain | `cls_generator.py` — maze generation algorithms, BFS/DFS solver, file I/O and the overall project's structure |
+| magram | `vvsual.py` + `help.py` — terminal renderer, colour system, interactive menu, easter egg layout |
 
 `a_maze_ing.py` and integration testing were shared between both members.
 
@@ -170,10 +178,6 @@ print(maze.get_selected_solution(2))  # up to 3 distinct paths
 - Separating `help.py` early meant both members could work on their modules in parallel without merge conflicts.
 - Adding a `SEED` option made debugging reproducible — the same maze could be regenerated exactly for testing.
 
-### The roles of each team member:
-
--magram : was the one who built the maze, and the responsible of the maze's colors and UI
--souhsain : is the responsible of the maze's algorithm and the overall project's structure   
 
 ### What could be improved
 
